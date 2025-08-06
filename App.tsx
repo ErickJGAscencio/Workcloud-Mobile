@@ -10,16 +10,20 @@ import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import Login from './src/screens/Login';
 import Menu from './src/screens/Menu';
 
+import { NavigationContainer } from '@react-navigation/native';
+import StackNavigator from './src/navigation/StackNavigator';
+
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <View style={styles.container}>
+    <NavigationContainer>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       {/* <NewAppScreen templateFileName="App.tsx" /> */}
       {/* <Login /> */}
-      <Menu />
-    </View>
+      {/* <Menu /> */}
+      <StackNavigator />
+    </NavigationContainer>
   );
 }
 
