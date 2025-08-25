@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -32,7 +32,7 @@ function Login({ navigation }) {
     try {
       setLoading(true);
       const res = await axios.post(
-        'https://workcloud-api.onrender.com/login/',
+        'https://workcloud-api.onrender.com/auth/login/',
         data,
         {
           headers: {
@@ -42,9 +42,10 @@ function Login({ navigation }) {
       );
 
       if (res != null && res.data.token != null) {
-        console.log('Respuesta:', res.data);
+        console.log('(Login)Respuesta:', res.data);
         try {
           await AsyncStorage.setItem('userToken', res.data.token);
+          console.log(res.data.token);
           console.log('Token guardado correctamente');
         } catch (error) {
           console.error('Error al guardar el token:', error);

@@ -8,20 +8,39 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { getProjectsByUser } from '../services/ProjectsService';
+import { getProjectsByUser, getUserProfile } from '../services/ProjectsService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Menu() {
-  const [projects, setProjects] = useState([null]);
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     async function obtenerProyectos() {
-      const resp = await getProjectsByUser(1);
-      console.log(resp);
-      setProjects(resp);
+      let token;
+      try {
+        token = await AsyncStorage.getItem('userToken');
+        console.log("Token:", token);
+        if (!token) throw new Error("Token no disponible");
+      } catch (err) {
+        console.error("Error obteniendo token:", err);
+        return;
+      }
+
+      try {
+        const res = await getUserProfile(token);
+        console.log("Perfil:", res.data);
+
+        const resp = await getProjectsByUser(res.data.id, token);
+        console.log("(Menu)Respuesta:", resp);
+        setProjects(resp);
+      } catch (err) {
+        console.error("Error en la carga de proyectos:", err);
+      }
     }
 
     obtenerProyectos();
   }, []);
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,19 +59,33 @@ function Menu() {
         </TouchableOpacity>
       </View>
       <View style={styles.filter}>
-        <Text>Por hacer</Text>
+        <Text>Todos</Text>
         <Text>En progreso</Text>
         <Text>Finalizados</Text>
       </View>
-      <View>
-        {projects != null &&
+      <View style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+        {projects ? (
           projects.map(item => (
-            <View key={item?.id} style={styles.card}>
+            <TouchableOpacity key={item?.id} style={styles.card}>
               <Text>{item?.project_name}</Text>
+              <View style={{ backgroundColor: '#cacacaff', width: '100%', height: 10, borderRadius: 10 }}>
+                <View
+                  style={{
+                    backgroundColor: '#1e1e1e',
+                    width: `${item?.progress ?? 0}%`,
+                    height: 10,
+                    borderRadius: 10,
+                  }}
+                />
+              </View>
               <Text>{item?.due_date}</Text>
-            </View>
-          ))}
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text>Cargando...</Text>
+        )}
       </View>
+
     </SafeAreaView>
   );
 }
@@ -66,7 +99,7 @@ const styles = StyleSheet.create({
     paddingInline: 15,
     paddingBlock: 20,
     // alignItems: 'center',
-    
+
   },
   menu: {
     display: 'flex',
@@ -111,7 +144,8 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#e3e3e3ff',
+    borderColor: '#c9c9c9ff',
     borderRadius: 10,
+    padding: 15,
   },
 });

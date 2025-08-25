@@ -12,6 +12,10 @@ import Menu from './src/screens/Menu';
 
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigator from './src/navigation/StackNavigator';
+import { createStackNavigator } from '@react-navigation/stack';
+import ProjectData from './src/screens/ProjectData';
+
+const Stack = createStackNavigator();
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -19,10 +23,11 @@ function App() {
   return (
     <NavigationContainer>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      {/* <NewAppScreen templateFileName="App.tsx" /> */}
-      {/* <Login /> */}
-      {/* <Menu /> */}
-      <StackNavigator />
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Menu" component={Menu} options={{ title: 'Menú Principal' }} />
+        <Stack.Screen name="Porject" component={ProjectData} options={{ title: 'Proyecto' }} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

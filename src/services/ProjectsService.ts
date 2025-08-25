@@ -1,17 +1,25 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-export const getProjectsByUser = async (id: number) => {
-  const token = await AsyncStorage.getItem('userToken');
-   const res = await axios.post(
-      `https://workcloud-api.onrender.com/api/v1/${id}`,
-      {}, // cuerpo vacío aquí se envian datos
-      {
-        headers: {
-          Authorization: `Token ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-  return [res.data];
+//User
+export const getUserProfile = (token:number) => {
+  return axios.get(`https://workcloud-api.onrender.com/auth/profile/`, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
+};
+export const getProjectsByUser = async (id: number, token: number) => {
+  
+  console.log("id - Token");
+  console.log(id, token);
+  const res = await axios.get(
+      `https://workcloud-api.onrender.com/api/v1/projects/by_user/`, {
+      params: {
+        user_id: id,
+      },
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+  return res.data;
 };
