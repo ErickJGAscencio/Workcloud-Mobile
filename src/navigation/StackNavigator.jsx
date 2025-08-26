@@ -8,12 +8,11 @@ const Stack = createStackNavigator();
 
 function StackNavigator() {
   return (
-    <SafeAreaProvider>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="Menu" component={Menu} options={{title: 'Workcloud', }} />
-      </Stack.Navigator>
-    </SafeAreaProvider>
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+      <Stack.Screen name='Menu' component={Menu} options={{ title: 'Workcloud', }} />
+        <Stack.Screen name="Main" component={TabNavigator} />
+    </Stack.Navigator>
   );
 }
 

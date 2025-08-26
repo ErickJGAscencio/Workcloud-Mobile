@@ -50,7 +50,8 @@ function Login({ navigation }) {
         } catch (error) {
           console.error('Error al guardar el token:', error);
         }
-        navigation.navigate('Menu');
+        navigation.replace('Main');
+        // navigation.navigate('Menu');
       }
     } catch (error) {
       console.error(

@@ -10,8 +10,10 @@ import {
 } from 'react-native';
 import { getProjectsByUser, getUserProfile } from '../services/ProjectsService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 function Menu() {
+  const navigation = useNavigation();
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
@@ -66,19 +68,23 @@ function Menu() {
       <View style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
         {projects ? (
           projects.map(item => (
-            <TouchableOpacity key={item?.id} style={styles.card}>
-              <Text>{item?.project_name}</Text>
-              <View style={{ backgroundColor: '#cacacaff', width: '100%', height: 10, borderRadius: 10 }}>
-                <View
-                  style={{
-                    backgroundColor: '#1e1e1e',
-                    width: `${item?.progress ?? 0}%`,
-                    height: 10,
-                    borderRadius: 10,
-                  }}
-                />
+            <TouchableOpacity key={item?.id} style={styles.card} onPress={() => navigation.navigate('Project', { project: item })}>
+              <View style={styles.cardUp}>
+                <Text style={styles.titleCard}>{item?.project_name}</Text>
               </View>
+              <View style={styles.cardDown}>
+                <View style={{ backgroundColor: '#cacacaff', width: '100%', height: 10, borderRadius: 10 }}>
+                  <View
+                    style={{
+                      backgroundColor: '#1e1e1e',
+                      width: `${item?.progress ?? 0}%`,
+                      height: 10,
+                      borderRadius: 10,
+                    }}
+                  />
+                </View>
               <Text>{item?.due_date}</Text>
+              </View>
             </TouchableOpacity>
           ))
         ) : (
@@ -99,7 +105,6 @@ const styles = StyleSheet.create({
     paddingInline: 15,
     paddingBlock: 20,
     // alignItems: 'center',
-
   },
   menu: {
     display: 'flex',
@@ -142,10 +147,26 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#c9c9c9ff',
     borderRadius: 10,
-    padding: 15,
   },
+  cardUp: {
+    width: '100%',
+    backgroundColor: '#eeeeeeff',
+    padding: 15,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  cardDown: {
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 15,
+    borderBottomLeftRadius:10,
+    borderBottomRightRadius:10
+  },
+  titleCard:{
+    fontSize:20,
+    fontWeight:500
+  }
 });
