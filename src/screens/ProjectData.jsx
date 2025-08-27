@@ -4,15 +4,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getTasks } from '../services/ProjectsService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
+import LinearGradient from 'react-native-linear-gradient';
+import Task from '../components/Task';
 
 function ProjectData() {
   const route = useRoute();
   const { project } = route.params || {};
   const [tasks, setTasks] = useState([]);
-  
-  
-  useEffect(()=>{
-    async function gettinTask(){
+  const [members, setMembers] = useState([]);
+
+
+  useEffect(() => {
+    async function gettinTask() {
       let token;
       try {
         token = await AsyncStorage.getItem('userToken');
@@ -22,14 +26,15 @@ function ProjectData() {
         return;
       }
 
-      const res = await getTasks(project.id,token);
+      const res = await getTasks(project.id, token);
+      setMembers(project.team_members);
       setTasks(res);
       console.log("(PD res: ", res);
     }
     console.log(project);
-    
+
     gettinTask();
-  },[]);
+  }, []);
 
   if (!project) {
     return <Text>No se recibió ningún proyecto</Text>;
@@ -37,14 +42,12 @@ function ProjectData() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text>{project.project_name}</Text>
-      <Text>Progreso: {project.progress}%</Text>
-      <Text>Fecha límite: {project.due_date}</Text>
 
       <View style={styles.card}>
-        <Text style={styles.titleCard}>Descripción</Text>
-      </View>
-      <View style={styles.card}>
+        <Text style={styles.titleCard}>{project.project_name}</Text>
+        <Text style={styles.titleCard}>{project.description}</Text>
+        <Text>Fecha límite: {project.due_date}</Text>
+
         <Text style={styles.titleCard}>Progreso Global</Text>
         <View style={{ backgroundColor: '#cacacaff', width: '100%', height: 10, borderRadius: 10 }}>
           <View
@@ -60,13 +63,24 @@ function ProjectData() {
       </View>
       <View style={styles.card}>
         <Text style={styles.titleCard}>Tareas</Text>
-        {tasks?(
-          tasks.map(item =>(
-            <Text key={item.id}>{item.id}</Text>
-          ))):(
+        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', margin:10}}>
+          <View style={{ backgroundColor: '#007aff', padding: 5, paddingInline: 8, borderRadius: 10 }}>
+            <Text style={{color:'white', fontWeight:500}}>Asignado</Text>
+          </View>
+          <View style={{ backgroundColor: '#f1f1f1ff', padding: 5, paddingInline: 8, borderRadius: 10 }}>
+            <Text style={{color:'black', fontWeight:500}}>No Asignado</Text>
+          </View>
+        </View>
+        <View style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {tasks ? (
+            tasks.map(item => (
+              <Task item={item}/>
+            ))
+          ) : (
             <Text>Cargando...</Text>
           )
-        }
+          }
+        </View>
       </View>
       <View style={styles.card}>
         <Text style={styles.titleCard}>Comentarios</Text>
@@ -78,7 +92,17 @@ function ProjectData() {
       </View>
       <View style={styles.card}>
         <Text style={styles.titleCard}>Miembros del equipo</Text>
-
+        <View style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {members ? (
+            members.map(item => (
+              <View key={item.id} style={{ display: 'flex', flexDirection: 'row', gap: 5 }}>
+                <Text>{item.username}</Text>
+              </View>
+            ))) : (
+            <Text>Cargando...</Text>
+          )
+          }
+        </View>
       </View>
       <View style={styles.card}>
         <Text style={styles.titleCard}>Estadísticas</Text>
@@ -148,7 +172,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   titleCard: {
-    fontSize: 20,
-    fontWeight: 500
+    fontSize: 18,
+    fontWeight: 500,
   }
 });
