@@ -9,6 +9,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import Task from '../components/Task';
 import Comments from '../components/Comments';
 import { ScrollView } from 'react-native-gesture-handler';
+import Members from '../components/Members';
+import Stadistics from '../components/Stadistics';
 
 function ProjectData() {
   const route = useRoute();
@@ -37,6 +39,14 @@ function ProjectData() {
 
     gettinTask();
   }, []);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      month: 'short',
+      day: 'numeric',
+    }); // Ejemplo: "Jul 5"
+  };
+
 
   if (!project) {
     return <Text>No se recibió ningún proyecto</Text>;
@@ -73,15 +83,27 @@ function ProjectData() {
                 }}
               />
             </View>
+            <View style={styles.gridContainer}>
+              <View style={styles.gridItem}>
+                <Text>Vencimiento: {formatDate(project.due_date)}</Text>
+              </View>
+              <View style={styles.gridItem}>
+                <Text>Tareas: {tasks.length}</Text>
+              </View>
+              <View style={styles.gridItem}>
+                <Text>Miembros: {project.team_members.length}</Text>
+              </View>
+              <View style={styles.gridItem}>
+                <Text>Estatus: {project.is_completed ? 'Completado' : 'En progreso'}</Text>
+              </View>
+            </View>
 
-            <Text>Fecha límite: {project.due_date}</Text>
-            <Text>Tareas: {tasks.length}</Text>
-            <Text>Miembros: {project.team_members.length}</Text>
-            <Text>Estatus: {project.is_completed ? ('Completado') : ('En progreso')}</Text>
           </View>
           <View style={styles.card}>
             <View style={styles.headerCard}>
-              <Text style={styles.titleCard}>Tareas</Text>
+              <Text style={styles.titleCard}>
+                <MaterialIcons name="list" size={20} color="#1e1e1e" />
+                Tareas</Text>
               <TouchableOpacity style={styles.button} onPress={() => ''}>
                 <MaterialIcons name="add" size={20} color="#fff" />
                 <Text style={styles.textButton}>Tarea</Text>
@@ -99,31 +121,34 @@ function ProjectData() {
             </View>
           </View>
           <View style={styles.card}>
-            <Text style={styles.titleCard}>Comentarios</Text>
+            <Text style={styles.titleCard}>
+              <MaterialIcons name="chat" size={20} color="#1e1e1e" />
+              Comentarios</Text>
             <Comments project={project} />
           </View>
           <View style={styles.card}>
-            <Text style={styles.titleCard}>Archivos</Text>
+            <Text style={styles.titleCard}>
+              <MaterialIcons name="folder" size={20} color="#1e1e1e" />
+              Archivos</Text>
 
           </View>
           <View style={styles.card}>
-            <Text style={styles.titleCard}>Miembros del equipo</Text>
-            <View style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {members ? (
-                members.map(item => (
-                  <View key={item.id} style={{ display: 'flex', flexDirection: 'row', gap: 5 }}>
-                    <Text>{item.username}</Text>
-                  </View>
-                ))) : (
-                <Text>Cargando...</Text>
-              )
-              }
-            </View>
+            <Text style={styles.titleCard}>
+              <MaterialIcons name="groups" size={20} color="#1e1e1e" />
+              Miembros del equipo</Text>
+            <Members members={members} />
           </View>
           <View style={styles.card}>
-            <Text style={styles.titleCard}>Estadísticas</Text>
-
+            <Text style={styles.titleCard}>
+              <MaterialIcons name="bar-chart" size={20} color="#1e1e1e" />
+              Estadísticas
+            </Text>
+            <Stadistics tasks={tasks} date={project.due_date} />
           </View>
+            <TouchableOpacity style={{ display:'flex', flexDirection:'row', justifyContent:'center',alignItems:'center', gap:10, width: '100%', backgroundColor: '#1e1e1e', borderRadius: 10, padding: 10 }}>
+            <Text style={{color:'#fff', textAlign:'center', fontSize:20}}>Eliminar</Text>
+            <MaterialIcons name="delete" size={20} color="#fff" />
+          </TouchableOpacity>
         </SafeAreaView>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -134,7 +159,6 @@ export default ProjectData
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#f4fdffff',
     paddingInline: 15,
     paddingBlock: 20,
@@ -202,5 +226,18 @@ const styles = StyleSheet.create({
   titleCard: {
     fontSize: 18,
     fontWeight: 500,
-  }
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  gridItem: {
+    width: '45%', // dos columnas con espacio entre ellas
+    backgroundColor: '#f1f1f1',
+    padding: 10,
+    borderRadius: 8,
+  },
 });

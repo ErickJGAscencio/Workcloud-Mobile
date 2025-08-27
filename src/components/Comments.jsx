@@ -37,8 +37,7 @@ function Comments({ project }) {
 
     const postComment = () => { }
     return (
-        <View>
-
+        <View style={{display:'flex', flexDirection:'column'}}>
             <View >
                 {comments.length > 0 ? (
                     comments.slice().reverse().map(comment => (
@@ -50,9 +49,7 @@ function Comments({ project }) {
                     <Text>Sin Comentarios</Text>
                 )}
             </View>
-            <View
-                style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-            >
+            <View style={{ marginTop:20,  display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <TextInput
                     style={styles.input}
                     onChange={(e) => setComment(e.target.value)}
@@ -69,6 +66,7 @@ export default Comments
 
 const styles = StyleSheet.create({
     input: {
+        width:'80%',
         borderWidth: 1,
         borderColor: 'rgba(226, 226, 226, 1)',
         borderRadius: 10,
