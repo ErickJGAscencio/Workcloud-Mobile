@@ -35,3 +35,24 @@ export const getTasks = async (id: number, token: number) => {
   });
   return res.data;
 }
+
+export const getCommtents = async (id:number, token:number) => {
+  try {
+    const response = await axios.get(
+      `https://workcloud-api.onrender.com/api/v1/comments/by_project/`,
+      {
+        params: {
+          id_project: id,
+        },
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.error(`Error getting comments.`, error);
+    return { error: "Error getting comments." };
+  }
+};

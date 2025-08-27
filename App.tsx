@@ -29,7 +29,7 @@ function TabNavigator() {
           height: 80,
           elevation: 5, // sombra en Android
         },
-        tabBarActiveTintColor: '#007AFF',
+        tabBarActiveTintColor: '#4394f1ff',
         tabBarInactiveTintColor: 'gray',
       })}
     >
@@ -78,27 +78,7 @@ export default function App() {
           // options={{ title: 'Proyecto', headerShown: true }}
           options={({ navigation }) => ({
             title: 'Proyecto',
-            headerRight: () => (
-              <TouchableOpacity
-                onPress={() => navigation.navigate('CreateTask')}
-                style={{
-                  marginRight: 15,
-                  flexDirection: 'row',
-                  alignItems: 'center', // 👈 centra verticalmente
-                  justifyContent: 'center',
-                  backgroundColor: '#007AFF',
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderRadius: 10,
-                }}
-              >
-                <Text style={{ color: '#fff', fontWeight: 'bold', marginRight: 6 }}>Nueva Tarea</Text>
-                <MaterialIcons name="add" size={20} color="#fff" />
-              </TouchableOpacity>
-
-            ),
             headerShown: true
-
           })}
         />
         <Stack.Screen name="Main" component={TabNavigator} />
