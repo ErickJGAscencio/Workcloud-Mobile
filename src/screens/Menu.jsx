@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -10,40 +10,42 @@ import {
 } from 'react-native';
 import { getProjectsByUser } from '../services/ProjectsService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { ProjectsContext } from '../context/ProjectsContext';
+import { ScrollView } from 'react-native-gesture-handler';
 
 function Menu() {
-  const {userData} = useContext(AuthContext);
-  const {projects, setProjects} = useContext(ProjectsContext);
+  const { userData } = useContext(AuthContext);
+  const { projects, setProjects } = useContext(ProjectsContext);
   const navigation = useNavigation();
   // const [projects, setProjects] = useState([]);
 
-  useEffect(() => {
-    async function obtenerProyectos() {
-      let token;
-      try {
-        token = await AsyncStorage.getItem('userToken');
-        console.log("Token:", token);
-        if (!token) throw new Error("Token no disponible");
-      } catch (err) {
-        console.error("Error obteniendo token:", err);
-        return;
-      }
+  useFocusEffect(
+    useCallback(() => {
+      async function obtenerProyectos() {
+        let token;
+        try {
+          token = await AsyncStorage.getItem('userToken');
+          console.log("Token:", token);
+          if (!token) throw new Error("Token no disponible");
+        } catch (err) {
+          console.error("Error obteniendo token:", err);
+          return;
+        }
 
-      try {
-        const userId = userData.id;
-        const resp = await getProjectsByUser(userId, token);
-        console.log("(Menu)Respuesta:", resp);
-        setProjects(resp);
-      } catch (err) {
-        console.error("Error en la carga de proyectos:", err);
+        try {
+          const userId = userData.id;
+          const resp = await getProjectsByUser(userId, token);
+          console.log("(Menu)Respuesta:", resp);
+          setProjects(resp);
+        } catch (err) {
+          console.error("Error en la carga de proyectos:", err);
+        }
       }
-    }
-
-    obtenerProyectos();
-  }, []);
+      obtenerProyectos(); // tu función de fetch
+    }, [])
+  );
 
 
   return (
@@ -67,33 +69,35 @@ function Menu() {
         <Text>Finalizados</Text>
         <Text>Eliminados</Text>
       </View>
-      <View style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-        {projects ? (
-          projects.map(item => (
-            <TouchableOpacity key={item?.id} style={styles.card} onPress={() => navigation.navigate('Project', { project: item })}>
-              <View style={styles.cardUp}>
-                <Text style={styles.titleCard}>{item?.project_name}</Text>
-              </View>
-              <View style={styles.cardDown}>
-                <View style={{ backgroundColor: '#cacacaff', width: '100%', height: 10, borderRadius: 10 }}>
-                  <View
-                    style={{
-                      backgroundColor: '#1e1e1e',
-                      width: `${item?.progress ?? 0}%`,
-                      height: 10,
-                      borderRadius: 10,
-                    }}
-                  />
-                </View>
-              <Text>{item?.due_date}</Text>
-              </View>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <Text>Cargando...</Text>
-        )}
-      </View>
+      <ScrollView>
 
+        <View style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+          {projects ? (
+            projects.map(item => (
+              <TouchableOpacity key={item?.id} style={styles.card} onPress={() => navigation.navigate('Project', { project: item })}>
+                <View style={styles.cardUp}>
+                  <Text style={styles.titleCard}>{item?.project_name}</Text>
+                </View>
+                <View style={styles.cardDown}>
+                  <View style={{ backgroundColor: '#cacacaff', width: '100%', height: 10, borderRadius: 10 }}>
+                    <View
+                      style={{
+                        backgroundColor: '#1e1e1e',
+                        width: `${item?.progress ?? 0}%`,
+                        height: 10,
+                        borderRadius: 10,
+                      }}
+                    />
+                  </View>
+                  <Text>{item?.due_date}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text>Cargando...</Text>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -162,11 +166,11 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     padding: 15,
-    borderBottomLeftRadius:10,
-    borderBottomRightRadius:10
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10
   },
-  titleCard:{
-    fontSize:20,
-    fontWeight:500
+  titleCard: {
+    fontSize: 20,
+    fontWeight: 500
   }
 });

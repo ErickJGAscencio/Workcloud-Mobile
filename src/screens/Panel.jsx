@@ -21,47 +21,65 @@ function Panel() {
 
         return threeWeeksFromNow.toLocaleDateString();
     };
-
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      month: 'short',
+      day: 'numeric',
+      year:'numeric'
+    }); // Ejemplo: "Jul 5"
+  };
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.card}>
-                <Text style={styles.titleCard}>
-                    <MaterialIcons name="account-tree" size={20} color="#1e1e1e" />
-                    Proyectos Activos</Text>
-                <Text>{activeProjects.length}</Text>
-            </View>
-            <View style={styles.card}>
-                <Text style={styles.titleCard}>
-                    <MaterialIcons name="add-task" size={20} color="#1e1e1e" />
-                    Proyectos Completados</Text>
-                <Text>{completedProjects.length}</Text>
+            <View style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+                <View style={[styles.card, {width:'49%'}]}>
+                    <Text style={styles.titleCard}>
+                        <MaterialIcons name="account-tree" size={20} color="#1e1e1e" />
+                        Proyectos{"\n"}Activos</Text>
+                    <Text>{activeProjects.length}</Text>
+                </View>
+                <View style={[styles.card, {width:'49%'}]}>
+                    <Text style={styles.titleCard}>
+                        <MaterialIcons name="add-task" size={20} color="#1e1e1e" />
+                        Proyectos{"\n"}Completados</Text>
+                    <Text>{completedProjects.length}</Text>
+                </View>
             </View>
             <View style={styles.card}>
                 <Text style={styles.titleCard}>
                     <MaterialIcons name="linear-scale" size={20} color="#1e1e1e" />
-                    Proximos Vencimientos (prox. 3 sem)</Text>
+                    Proximos Vencimientos</Text>
+                <Text>(prox. 3 sem)</Text>
                 {projects && (
-                    projects.filter(project => new Date(project.due_date).toLocaleDateString() <= getDeadlineProjects()).map(
+                    projects.filter(project => (
+                        new Date(project.due_date).toLocaleDateString() <= getDeadlineProjects()
+                        && new Date(project.due_date) >= new Date())).map(
+                            item => (
+                                <View key={item.id} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Text>{item.project_name}</Text>
+                                <Text>{formatDate(item.due_date)}</Text>
+                                </View>
+                            )
+                        )
+                )
+                }
+            </View>
+            <View style={styles.card}>
+                <Text style={styles.titleCard}>
+                    <MaterialIcons name="linear-scale" size={20} color="#1e1e1e" />
+                    Vencidos</Text>
+                {projects && (
+                    projects.filter(project => new Date(project.due_date) <= new Date()).map(
                         item => (
                             <View key={item.id} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text>{item.project_name}</Text>
-                                <Text key={item.id}>{item.due_date}</Text>
+                                <Text>{formatDate(item.due_date)}</Text>
                             </View>
                         )
                     )
                 )
                 }
-
-                {/* {projects && (
-                    projects.map(item => (
-                        <View key={item.id} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text>{item.project_name}</Text>
-                            <Text>{new Date(item.due_date).toLocaleDateString()}</Text>
-                        </View>
-                    ))
-                )
-                } */}
             </View>
         </SafeAreaView>
     )
@@ -92,7 +110,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     card: {
-        width: '100%',
         borderWidth: 1,
         borderColor: '#c9c9c9ff',
         backgroundColor: '#fff',
@@ -100,4 +117,8 @@ const styles = StyleSheet.create({
         padding: 8,
         elevation: 3,
     },
+    titleCard: {
+        fontSize: 20,
+        fontWeight: 500
+    }
 });

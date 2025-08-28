@@ -115,7 +115,7 @@ function ProjectData() {
                   <Task key={item.id} item={item} project={project} />
                 ))
               ) : (
-                <Text>Cargando...</Text>
+                <Text>Sin tareas</Text>
               )
               }
             </View>
