@@ -62,8 +62,8 @@ function ProjectData() {
           <View style={styles.card}>
             <View style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
               <View>
-                <Text style={styles.titleCard}>{project.project_name}</Text>
-                <Text style={styles.titleCard}>{project.description}</Text>
+                <Text style={styles.titleProject}>{project.project_name}</Text>
+                <Text style={styles.subtitleProject}>{project.description}</Text>
               </View>
               <TouchableOpacity style={styles.button} onPress={() => ''}>
                 <MaterialIcons name="edit" size={20} color="#fff" />
@@ -146,7 +146,7 @@ function ProjectData() {
             <Stadistics tasks={tasks} date={project.due_date} />
           </View>
             <TouchableOpacity style={{ display:'flex', flexDirection:'row', justifyContent:'center',alignItems:'center', gap:10, width: '100%', backgroundColor: '#1e1e1e', borderRadius: 10, padding: 10 }}>
-            <Text style={{color:'#fff', textAlign:'center', fontSize:20}}>Eliminar</Text>
+            <Text style={{color:'#fff', textAlign:'center', fontSize:20}}>Eliminar Proyecto</Text>
             <MaterialIcons name="delete" size={20} color="#fff" />
           </TouchableOpacity>
         </SafeAreaView>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     paddingInline: 15,
     paddingBlock: 20,
     padding: 20,
-    gap: 12,
+    gap: 12,flex:1,
   },
   menu: {
     display: 'flex',
@@ -226,6 +226,14 @@ const styles = StyleSheet.create({
   titleCard: {
     fontSize: 18,
     fontWeight: 500,
+  },
+  titleProject:{
+    fontSize: 25,
+    fontWeight: 500,
+  },
+  subtitleProject:{
+    fontSize: 15,
+    fontWeight: 400,
   },
   gridContainer: {
     flexDirection: 'row',

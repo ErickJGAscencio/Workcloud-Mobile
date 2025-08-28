@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -8,13 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { getProjectsByUser, getUserProfile } from '../services/ProjectsService';
+import { getProjectsByUser } from '../services/ProjectsService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../context/AuthContext';
+import { ProjectsContext } from '../context/ProjectsContext';
 
 function Menu() {
+  const {userData} = useContext(AuthContext);
+  const {projects, setProjects} = useContext(ProjectsContext);
   const navigation = useNavigation();
-  const [projects, setProjects] = useState([]);
+  // const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     async function obtenerProyectos() {
@@ -29,10 +33,8 @@ function Menu() {
       }
 
       try {
-        const res = await getUserProfile(token);
-        console.log("Perfil:", res.data);
-
-        const resp = await getProjectsByUser(res.data.id, token);
+        const userId = userData.id;
+        const resp = await getProjectsByUser(userId, token);
         console.log("(Menu)Respuesta:", resp);
         setProjects(resp);
       } catch (err) {
@@ -48,7 +50,6 @@ function Menu() {
     <SafeAreaView style={styles.container}>
       <View style={styles.menu}>
         <View style={styles.contenedorInput}>
-          <Text>Mis projectos</Text>
           <TextInput
             style={styles.input}
             onChangeText={() => ''}
@@ -64,6 +65,7 @@ function Menu() {
         <Text>Todos</Text>
         <Text>En progreso</Text>
         <Text>Finalizados</Text>
+        <Text>Eliminados</Text>
       </View>
       <View style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
         {projects ? (
@@ -104,12 +106,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4fdffff',
     paddingInline: 15,
     paddingBlock: 20,
-    // alignItems: 'center',
   },
   menu: {
     display: 'flex',
     flexDirection: 'row',
-    padding: 0,
     width: '100%',
     justifyContent: 'space-evenly',
     alignItems: 'center',

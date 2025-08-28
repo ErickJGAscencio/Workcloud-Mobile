@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -10,8 +10,10 @@ import {
   View,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../context/AuthContext';
 
 function Login({ navigation }) {
+  const {setUserData} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     username: '',
@@ -45,7 +47,8 @@ function Login({ navigation }) {
         console.log('(Login)Respuesta:', res.data);
         try {
           await AsyncStorage.setItem('userToken', res.data.token);
-          console.log(res.data.token);
+          setUserData(res.data.user);
+          // console.log(res.data.token);
           console.log('Token guardado correctamente');
         } catch (error) {
           console.error('Error al guardar el token:', error);
@@ -126,6 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     borderColor: '#d6d6d6ff',
+    color:'#1e1e1e'
   },
   titulo: {
     fontSize: 35,

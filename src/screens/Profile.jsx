@@ -1,35 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserProfile } from '../services/ProjectsService';
+import { AuthContext } from '../context/AuthContext';
 
 function Profile() {
-    const [data, setData] = useState([]);
+    const {userData} = useContext(AuthContext);
+    const [data, setData] = useState(userData);
 
-    useEffect(() => {
-        async function obtenerProyectos() {
-            let token;
-            try {
-                token = await AsyncStorage.getItem('userToken');
-                if (!token) throw new Error("Token no disponible");
-            } catch (err) {
-                console.error("Error obteniendo token:", err);
-                return;
-            }
-
-            try {
-                const res = await getUserProfile(token);
-                setData(res.data);
-                console.log("Perfil:", res.data);
-            } catch (err) {
-                console.error("Error en la carga de proyectos:", err);
-            }
-        }
-
-        obtenerProyectos();
-    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -37,7 +17,7 @@ function Profile() {
                 <View style={{ display: 'flex', flexDirection: 'row', padding: 20, gap: 15, alignItems: 'center' }}>
                     <View style={styles.iconUser}>
                         <Text style={styles.iconLetter}>
-                            {data && (data?.username.charAt(0).toUpperCase())}
+                            {data?.username && (data?.username.charAt(0).toUpperCase())}
                         </Text>
                     </View>
                     <Text>{data?.username}</Text>

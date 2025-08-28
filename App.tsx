@@ -16,50 +16,55 @@ import Menu from './src/screens/Menu';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import Panel from './src/screens/Panel';
 import ProjectData from './src/screens/ProjectData';
-
+import { AuthProvider } from './src/context/AuthContext';
+import { ProjectsProvider } from './src/context/ProjectsContext';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function TabNavigator() {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarStyle: {
-          backgroundColor: '#fff',
-          height: 80,
-          elevation: 5, // sombra en Android
-        },
-        tabBarActiveTintColor: '#4394f1ff',
-        tabBarInactiveTintColor: 'gray',
-      })}
-    >
-      <Tab.Screen
-        name="Menu"
-        component={Menu}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="dashboard" size={size} color={color} />
-          ),
-        }}
-      /><Tab.Screen
-        name="Panel"
-        component={Panel}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="view-carousel" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="person" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+    <ProjectsProvider>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarStyle: {
+            backgroundColor: '#fff',
+            height: 80,
+            elevation: 5, // sombra en Android
+          },
+          tabBarActiveTintColor: '#4394f1ff',
+          tabBarInactiveTintColor: 'gray',
+        })}
+      >
+        <Tab.Screen
+          name="Menu"
+          component={Menu}
+          options={{
+            title: 'Proyectos',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="dashboard" size={size} color={color} />
+            ),
+          }}
+        /><Tab.Screen
+          name="Panel"
+          component={Panel}
+          options={{
+            title: 'Panel General',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="view-carousel" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Perfil"
+          component={Profile}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="person" size={size} color={color} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </ProjectsProvider>
   )
 };
 
@@ -67,23 +72,27 @@ export default function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <NavigationContainer>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Menu" component={Menu} />
-        <Stack.Screen
-          name="Project"
-          component={ProjectData}
-          // options={{ title: 'Proyecto', headerShown: true }}
-          options={({ navigation }) => ({
-            title: 'Proyecto',
-            headerShown: true
-          })}
-        />
-        <Stack.Screen name="Main" component={TabNavigator} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <ProjectsProvider>
+        <NavigationContainer>
+          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Menu" component={Menu} />
+            <Stack.Screen
+              name="Project"
+              component={ProjectData}
+              // options={{ title: 'Proyecto', headerShown: true }}
+              options={({ navigation }) => ({
+                title: 'Proyecto',
+                headerShown: true
+              })}
+            />
+            <Stack.Screen name="Main" component={TabNavigator} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ProjectsProvider>
+    </AuthProvider>
   );
 }
 
