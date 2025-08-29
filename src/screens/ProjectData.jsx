@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { getTasks } from '../services/ProjectsService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
-import LinearGradient from 'react-native-linear-gradient';
 import Task from '../components/Task';
 import Comments from '../components/Comments';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -57,7 +56,7 @@ function ProjectData() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
     >
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <SafeAreaView style={styles.container}>
           <View style={styles.card}>
             <View style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -145,8 +144,12 @@ function ProjectData() {
             </Text>
             <Stadistics tasks={tasks} date={project.due_date} />
           </View>
-            <TouchableOpacity style={{ display:'flex', flexDirection:'row', justifyContent:'center',alignItems:'center', gap:10, width: '100%', backgroundColor: '#1e1e1e', borderRadius: 10, padding: 10 }}>
-            <Text style={{color:'#fff', textAlign:'center', fontSize:20}}>Eliminar Proyecto</Text>
+          <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10, width: '100%', backgroundColor: '#1e1e1e', borderRadius: 10, padding: 10 }}>
+            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 20 }}>Exportar CVS</Text>
+            <MaterialIcons name="description" size={20} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10, width: '100%', backgroundColor: '#1e1e1e', borderRadius: 10, padding: 10 }}>
+            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 20 }}>Eliminar Proyecto</Text>
             <MaterialIcons name="delete" size={20} color="#fff" />
           </TouchableOpacity>
         </SafeAreaView>
@@ -163,7 +166,8 @@ const styles = StyleSheet.create({
     paddingInline: 15,
     paddingBlock: 20,
     padding: 20,
-    gap: 12,flex:1,
+    gap: 12,
+    flex: 1,
   },
   menu: {
     display: 'flex',
@@ -227,11 +231,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 500,
   },
-  titleProject:{
+  titleProject: {
     fontSize: 25,
     fontWeight: 500,
   },
-  subtitleProject:{
+  subtitleProject: {
     fontSize: 15,
     fontWeight: 400,
   },

@@ -7,24 +7,29 @@ import { getUserProfile } from '../services/ProjectsService';
 import { AuthContext } from '../context/AuthContext';
 
 function Profile() {
-    const {userData} = useContext(AuthContext);
+    const { userData, logout } = useContext(AuthContext);
     const [data, setData] = useState(userData);
 
+    console.log('PERFIL: ');
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.card}>
-                <View style={{ display: 'flex', flexDirection: 'row', padding: 20, gap: 15, alignItems: 'center' }}>
+                <View style={{ display: 'flex', flexDirection: 'column', padding: 20, gap: 15, alignItems: 'center' }}>
                     <View style={styles.iconUser}>
                         <Text style={styles.iconLetter}>
                             {data?.username && (data?.username.charAt(0).toUpperCase())}
                         </Text>
                     </View>
-                    <Text>{data?.username}</Text>
+                    <Text style={{ fontSize: 25 }}>{data?.username}</Text>
                 </View>
-                <Text>{data?.email}</Text>
+                <View style={{ display: 'flex', flexDirection: 'row', padding: 20, justifyContent: 'space-between' }}>
+                    <Text>Correo: </Text>
+                    <Text>{data?.email}</Text>
+                </View>
             </View>
-            <TouchableOpacity style={{ display:'flex', flexDirection:'row', justifyContent:'center',alignItems:'center', gap:10, width: '100%', backgroundColor: '#1e1e1e', borderRadius: 10, padding: 10 }}>
+            <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10, width: '100%', backgroundColor: '#1e1e1e', borderRadius: 10, padding: 10 }}
+                onPress={logout}>
                 <Text style={{ color: '#fff', textAlign: 'center', fontSize: 20 }}>Cerrar Sesión</Text>
                 <MaterialIcons name="logout" size={20} color="#fff" />
             </TouchableOpacity>

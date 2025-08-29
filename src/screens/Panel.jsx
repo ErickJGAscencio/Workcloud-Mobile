@@ -17,29 +17,29 @@ function Panel() {
     const getDeadlineProjects = () => {
         const now = new Date();
         const threeWeeksFromNow = new Date();
-        threeWeeksFromNow.setDate(now.getDate() + 21); // 3 semanas adelante
+        threeWeeksFromNow.setDate(now.getDate() + 21); // para 3 semanas adelante
 
         return threeWeeksFromNow.toLocaleDateString();
     };
-const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
-      month: 'short',
-      day: 'numeric',
-      year:'numeric'
-    }); // Ejemplo: "Jul 5"
-  };
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        }); // Ejemplo: "Jul 5"
+    };
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
-                <View style={[styles.card, {width:'49%'}]}>
+                <View style={[styles.card, { width: '49%' }]}>
                     <Text style={styles.titleCard}>
                         <MaterialIcons name="account-tree" size={20} color="#1e1e1e" />
                         Proyectos{"\n"}Activos</Text>
                     <Text>{activeProjects.length}</Text>
                 </View>
-                <View style={[styles.card, {width:'49%'}]}>
+                <View style={[styles.card, { width: '49%' }]}>
                     <Text style={styles.titleCard}>
                         <MaterialIcons name="add-task" size={20} color="#1e1e1e" />
                         Proyectos{"\n"}Completados</Text>
@@ -49,22 +49,27 @@ const formatDate = (dateString) => {
             <View style={styles.card}>
                 <Text style={styles.titleCard}>
                     <MaterialIcons name="linear-scale" size={20} color="#1e1e1e" />
-                    Proximos Vencimientos</Text>
+                    Próximos Vencimientos
+                </Text>
                 <Text>(prox. 3 sem)</Text>
                 {projects && (
-                    projects.filter(project => (
-                        new Date(project.due_date).toLocaleDateString() <= getDeadlineProjects()
-                        && new Date(project.due_date) >= new Date())).map(
-                            item => (
-                                <View key={item.id} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text>{item.project_name}</Text>
+                    projects
+                        .filter(project => {
+                            const due = new Date(project.due_date);
+                            const now = new Date();
+                            const deadline = new Date();
+                            deadline.setDate(now.getDate() + 21);
+                            return due >= now && due <= deadline;
+                        })
+                        .map(item => (
+                            <View key={item.id} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text>{item.project_name}</Text>
                                 <Text>{formatDate(item.due_date)}</Text>
-                                </View>
-                            )
-                        )
-                )
-                }
+                            </View>
+                        ))
+                )}
             </View>
+
             <View style={styles.card}>
                 <Text style={styles.titleCard}>
                     <MaterialIcons name="linear-scale" size={20} color="#1e1e1e" />

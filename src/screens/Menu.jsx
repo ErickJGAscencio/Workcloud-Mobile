@@ -14,6 +14,8 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
 import { ProjectsContext } from '../context/ProjectsContext';
 import { ScrollView } from 'react-native-gesture-handler';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
+import Filter from '../components/Filter';
 
 function Menu() {
   const { userData } = useContext(AuthContext);
@@ -47,7 +49,14 @@ function Menu() {
     }, [])
   );
 
-
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        }); // Ejemplo: "Jul 5"
+    };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.menu}>
@@ -56,19 +65,18 @@ function Menu() {
             style={styles.input}
             onChangeText={() => ''}
             placeholder="Mi proyecto favorito"
+            placeholderTextColor="#888"
           />
+          <MaterialIcons style={{display:'flex', position:'absolute', alignSelf:'flex-end', marginRight:10, top:10}} name="search" size={20} color="#888" />
+          
         </View>
-        {/* <TextInput style={styles.input} onChangeText={() => ''} /> */}
-        <TouchableOpacity style={styles.button} onPress={() => ''}>
-          <Text style={styles.textButton}>+ Nuevo Proyecto</Text>
+        <TouchableOpacity style={[styles.button, {display:'flex', flexDirection:'row', justifyContent:'space-between'}]} onPress={() => ''}>
+          <MaterialIcons style={{ }} name="add" size={20} color="#ffffffff" />
+          <Text style={styles.textButton}>
+            Proyecto</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.filter}>
-        <Text>Todos</Text>
-        <Text>En progreso</Text>
-        <Text>Finalizados</Text>
-        <Text>Eliminados</Text>
-      </View>
+      <Filter />
       <ScrollView>
 
         <View style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
@@ -89,7 +97,7 @@ function Menu() {
                       }}
                     />
                   </View>
-                  <Text>{item?.due_date}</Text>
+                  <Text>Termina: {formatDate(item?.due_date)}</Text>
                 </View>
               </TouchableOpacity>
             ))
@@ -118,12 +126,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
   },
-  filter: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 20,
-    marginVertical: 10,
-  },
   contenedorInput: {
     flexGrow: 1,
     minWidth: 200,
@@ -136,6 +138,7 @@ const styles = StyleSheet.create({
     borderColor: '#d6d6d6ff',
     backgroundColor: '#fff',
     height: 40,
+    color:'#1e1e1e'
   },
   button: {
     backgroundColor: '#4394f1ff',

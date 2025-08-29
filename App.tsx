@@ -16,12 +16,14 @@ import Menu from './src/screens/Menu';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import Panel from './src/screens/Panel';
 import ProjectData from './src/screens/ProjectData';
-import { AuthProvider } from './src/context/AuthContext';
+import { AuthContext, AuthProvider } from './src/context/AuthContext';
 import { ProjectsProvider } from './src/context/ProjectsContext';
+import { useContext, useEffect } from 'react';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function TabNavigator() {
+  
   return (
     <ProjectsProvider>
       <Tab.Navigator
@@ -68,29 +70,40 @@ function TabNavigator() {
   )
 };
 
+function AppContent() {
+  const { authenticated, restoreSession} = useContext(AuthContext);
+
+  useEffect(()=>{
+    restoreSession();
+  },[]);
+
+  return (
+    <NavigationContainer>
+      
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+  {!authenticated ? (
+    <Stack.Screen name="Login" component={Login} />
+  ) : (
+    <>
+      <Stack.Screen name="Main" component={TabNavigator} />
+      <Stack.Screen name="Project" component={ProjectData} options={{ headerShown: true }} />
+    </>
+  )}
+</Stack.Navigator>
+
+    </NavigationContainer>
+  );
+}
+
+
 export default function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
     <AuthProvider>
       <ProjectsProvider>
-        <NavigationContainer>
-          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Menu" component={Menu} />
-            <Stack.Screen
-              name="Project"
-              component={ProjectData}
-              // options={{ title: 'Proyecto', headerShown: true }}
-              options={({ navigation }) => ({
-                title: 'Proyecto',
-                headerShown: true
-              })}
-            />
-            <Stack.Screen name="Main" component={TabNavigator} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <AppContent />
       </ProjectsProvider>
     </AuthProvider>
   );

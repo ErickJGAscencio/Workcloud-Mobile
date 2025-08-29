@@ -13,57 +13,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
 
 function Login({ navigation }) {
-  const {setUserData} = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    username: '',
-    password: '',
-  });
+  const [form, setForm] = useState({ username: '', password: '' });
 
-  const checkAPI = async () => {
-    const data = {
-      username: form.username,
-      password: form.password,
-    };
-
-    if (data.username.trim() == '' || data.password.trim() == '') {
-      console.log('Campos vacios, favor de llenar.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const res = await axios.post(
-        'https://workcloud-api.onrender.com/auth/login/',
-        data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      if (res != null && res.data.token != null) {
-        console.log('(Login)Respuesta:', res.data);
-        try {
-          await AsyncStorage.setItem('userToken', res.data.token);
-          setUserData(res.data.user);
-          // console.log(res.data.token);
-          console.log('Token guardado correctamente');
-        } catch (error) {
-          console.error('Error al guardar el token:', error);
-        }
-        navigation.replace('Main');
-        // navigation.navigate('Menu');
-      }
-    } catch (error) {
-      console.error(
-        'Error en la llamada:',
-        error.response?.data || error.message,
-      );
-    } finally {
-      setLoading(false);
-    }
+  const handleLogin = async () => {
+    setLoading(true);
+    await login(form.username, form.password);
+    setLoading(false);
   };
 
   return (
@@ -85,17 +42,18 @@ function Login({ navigation }) {
             <TextInput
               style={styles.input}
               onChangeText={password => setForm({ ...form, password })}
+              secureTextEntry
             />
           </View>
           {loading ? (
             <Text>Cargando...</Text>
           ) : (
-            <TouchableOpacity style={styles.button} onPress={checkAPI}>
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
               <Text style={styles.textButton}>Acceder</Text>
             </TouchableOpacity>
           )}
           <Text>
-            ¿No tienes una cuenta? <Text>Toca aquí</Text>
+            ¿No tienes una cuenta? <Text>Regístrate</Text>
           </Text>
         </View>
       </SafeAreaView>
